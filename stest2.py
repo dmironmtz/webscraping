@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 29 16:48:27 2019
-
-@author: alfon
-"""
 import numpy as np
 import requests
 from bs4 import BeautifulSoup
@@ -40,14 +34,16 @@ links = eliminar_duplicados(links)
 # En primer lugar vamos a almacenar los links de todas las recetas
 
 array_recetas = []
-
+categorias = []
 # Recorremos los enlaces a las recetas
 for link in links:
     if "plato" in str(link):
-        # Recorremos las recetas de cada categoria
+        #añadimos el plato al array de categorias
         categoria = link.contents[0]
-        print(categoria)
-        
+        if categoria not in categorias:
+            categorias.append(categoria)
+        # Recorremos las recetas de cada categoria
+
         #Extraemos las recetas de la pagina actual
         
         array_recetas += extraer_links_recetas(link['href'])
@@ -58,6 +54,7 @@ for link in links:
         soup = BeautifulSoup(src, 'lxml')
         
         nav_pag = soup.find('ul', class_="page-numbers")
+        
         # Si hay mas de una pagina
         if nav_pag:
             nav_pag_len = len(nav_pag.find_all('li'))
@@ -73,4 +70,21 @@ for link in links:
                 
 array_recetas = list(dict.fromkeys(array_recetas))            
 array_recetas = eliminar_duplicados(array_recetas)
-print(len(array_recetas))
+
+conta = 0
+# Ahora que tenemos las urls de todas las recetas vamos a extraer la información de cada una de ellas
+for receta in array_recetas:
+    result = requests.get(receta)
+    if result.status_code == 200:
+        conta += 1
+        src = result.content
+        soup = BeautifulSoup(src, 'lxml')
+        # Si encontramos el menu de la categoria y titulo
+        if soup.find(class_="cb-breadcrumbs"):
+            # Extraemos la categoria
+            categoria = soup.find(class_="cb-breadcrumbs").find_all('a')[1].contents[0]
+            # Si la receta está en alguna de las categorías seguimos, si no saltamos la receta
+            if categoria in categorias:    
+                # Extraemos el titulo
+                titulo = soup.find(class_="breadcrumb_last").contents[0]
+                print(titulo)
