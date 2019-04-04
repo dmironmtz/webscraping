@@ -1,4 +1,3 @@
-import numpy as np
 import requests
 from bs4 import BeautifulSoup
 
@@ -71,12 +70,10 @@ for link in links:
 array_recetas = list(dict.fromkeys(array_recetas))            
 array_recetas = eliminar_duplicados(array_recetas)
 
-conta = 0
 # Ahora que tenemos las urls de todas las recetas vamos a extraer la información de cada una de ellas
 for receta in array_recetas:
     result = requests.get(receta)
     if result.status_code == 200:
-        conta += 1
         src = result.content
         soup = BeautifulSoup(src, 'lxml')
         # Si encontramos el menu de la categoria y titulo
@@ -87,4 +84,13 @@ for receta in array_recetas:
             if categoria in categorias:    
                 # Extraemos el titulo
                 titulo = soup.find(class_="breadcrumb_last").contents[0]
-                print(titulo)
+                #print(titulo)
+                ingredientes = soup.find('ul', class_="wpurp-recipe-ingredient-container")
+                if ingredientes: 
+                    numero_ingredientes = len(ingredientes.find_all('li'))
+                    array_ingredientes = []
+                    i = 1
+                    while i <= numero_ingredientes:
+                        array_ingredientes += i
+                        i += 1
+                    
