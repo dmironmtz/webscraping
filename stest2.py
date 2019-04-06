@@ -1,4 +1,5 @@
-import numpy as np
+import os
+import csv
 import requests
 from bs4 import BeautifulSoup
 
@@ -71,6 +72,9 @@ for link in links:
 array_recetas = list(dict.fromkeys(array_recetas))            
 array_recetas = eliminar_duplicados(array_recetas)
 
+# Array en el que almacenar la información de las recetas
+array_recetas_data = []
+
 conta = 0
 # Ahora que tenemos las urls de todas las recetas vamos a extraer la información de cada una de ellas
 for receta in array_recetas:
@@ -86,5 +90,50 @@ for receta in array_recetas:
             # Si la receta está en alguna de las categorías seguimos, si no saltamos la receta
             if categoria in categorias:    
                 # Extraemos el titulo
-                titulo = soup.find(class_="breadcrumb_last").contents[0]
-                print(titulo)
+                titulo = soup.find(class_="breadcrumb_last").contents[0].replace(",","")
+                # Extraemos las instrucciones
+                instrucciones = "Instrucciones: "
+                # En primer lugar buscamos las instrucciones del panel Instrucciones
+                if soup.find("span", string="Instrucciones"):
+                    div_inst_act = soup.find("span", string="Instrucciones").find_parent('div').find_next_sibling('div')
+                    arr_inst_act = [item.find_next("span").text for item in div_inst_act.find_all('span', class_='wpurp-recipe-instruction-text')]
+                    arr_inst_act.pop()
+                
+                    inst_num = 1
+                    for inst in arr_inst_act:
+                        instrucciones += str(inst_num) + ") " + inst.replace(",","") + " " 
+                        inst_num += 1
+                
+                    # Ahora hay que buscar si la receta tiene más instrucciones
+                    arr_inst_extra = soup.find_all("span", class_="wpurp-recipe-instruction-group")
+                    # Si hay mas instrucciones
+                    if arr_inst_extra:
+                        for inst_extra in arr_inst_extra:
+                            # Nos quedamos con el titulo de la preparacion
+                            titulo = inst_extra.contents[0]
+                            # Extraemos las instrucciones
+                            div_inst_act = inst_extra.find_parent('div').find_next_sibling('div')
+                            arr_inst_act = [item.find_next("span").text for item in div_inst_act.find_all('span', class_='wpurp-recipe-instruction-text')]
+                            arr_inst_act.pop()
+                        
+                            instrucciones += ". <<" + titulo + ">> "
+                            inst_num = 1
+                            for inst in arr_inst_act:
+                                instrucciones += str(inst_num) + ") " + inst.replace(",","") + " " 
+                                inst_num += 1
+                
+                    array_recetas_data.append([titulo, categoria, receta, "", "", instrucciones])
+    # Para pruebas
+    if conta > 50:       
+        break
+
+# Creacion del csv
+currentDir = os.path.dirname(__file__)
+filename = "recetas_dataset.csv"
+filePath = os.path.join(currentDir, filename)
+
+with open(filePath, 'w', newline='') as csvFile:
+  writer = csv.writer(csvFile)
+  writer.writerow(["Titulo", "Categoria", "Url", "Raciones", "Ingredientes", "Instrucciones"])
+  for receta_data in array_recetas_data:
+      writer.writerow(receta_data)
