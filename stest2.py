@@ -84,7 +84,7 @@ for receta in array_recetas:
             if categoria in categorias:    
                 # Extraemos el titulo
                 titulo = soup.find(class_="breadcrumb_last").contents[0]
-                print(titulo)
+                #print(titulo)
                 ingredientes = soup.find('ul', class_="wpurp-recipe-ingredient-container")
                 if ingredientes: 
                     numero_ingredientes = len(ingredientes.find_all('li'))
@@ -102,8 +102,9 @@ for receta in array_recetas:
                         else:
                             lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-name").contents[0]
                         if ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-notes"):
-                            lista_ingredientes += " "
-                            lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-notes").contents[0]
-                        lista_ingredientes += ";"
+                            if type(ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-notes")) is str:
+                                lista_ingredientes += " "
+                                lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-notes").contents[0]
+                                lista_ingredientes += ";"
                         i += 1
-                    print(lista_ingredientes)    
+                    #print(lista_ingredientes)
