@@ -84,13 +84,26 @@ for receta in array_recetas:
             if categoria in categorias:    
                 # Extraemos el titulo
                 titulo = soup.find(class_="breadcrumb_last").contents[0]
-                #print(titulo)
+                print(titulo)
                 ingredientes = soup.find('ul', class_="wpurp-recipe-ingredient-container")
                 if ingredientes: 
                     numero_ingredientes = len(ingredientes.find_all('li'))
-                    array_ingredientes = []
-                    i = 1
-                    while i <= numero_ingredientes:
-                        array_ingredientes += i
+                    lista_ingredientes = repr(numero_ingredientes) + " ingredientes: "
+                    i = 0
+                    while i < numero_ingredientes:
+                        if ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-quantity"): 
+                            lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-quantity").contents[0]
+                            lista_ingredientes += " "
+                        if ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-unit"): 
+                            lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-unit").contents[0]
+                            lista_ingredientes += " "
+                        if ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-name").find('a'):
+                            lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-name").find('a').contents[0]
+                        else:
+                            lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-name").contents[0]
+                        if ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-notes"):
+                            lista_ingredientes += " "
+                            lista_ingredientes += ingredientes.find_all('li')[i].find('span', class_="wpurp-recipe-ingredient-notes").contents[0]
+                        lista_ingredientes += ";"
                         i += 1
-                    
+                    print(lista_ingredientes)    
