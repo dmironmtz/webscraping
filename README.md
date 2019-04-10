@@ -11,3 +11,4 @@ Miembros del equipo:
 Ficheros entregados:
 * **recetas.py**: código fuente en python.
 * **recetas_dataset.csv**: fichero con el dataset obtenido.
+* **Práctica1.pdf**: documentación con la respuesta a los puntos del enunciado de la práctica.
