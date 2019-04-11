@@ -12,3 +12,8 @@ Ficheros entregados:
 * **recetas.py**: código fuente en python.
 * **recetas_dataset.csv**: fichero con el dataset obtenido.
 * **Práctica1.pdf**: documentación con la respuesta a los puntos del enunciado de la práctica.
+
+Para la ejecución es necesario instalar las siguientes librerias:
+
+`pip install requests`<br>
+`pip install beautifulsoup4`
