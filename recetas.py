@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 url = "https://www.eladerezo.com/"
 
-result = requests.get(url)
+result = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
 src = result.content
 soup = BeautifulSoup(src, 'lxml')
 
